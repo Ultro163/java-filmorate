@@ -2,11 +2,20 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
+import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -15,9 +24,9 @@ public class FilmController {
     private final Map<Long, Film> films = new HashMap<>();
 
     @GetMapping
-    public Collection<Film> getFilms() {
+    public List<Film> getFilms() {
         log.info("Getting all films");
-        return films.values();
+        return new ArrayList<>(films.values());
     }
 
     @PostMapping
@@ -32,11 +41,11 @@ public class FilmController {
     public Film updateFilm(@Valid @RequestBody Film film) {
         if (film.getId() == null) {
             log.warn("Film id is null");
-            throw new ValidationException("Film id is null");
+            throw new ConditionsNotMetException("Film id is null");
         }
         if (films.get(film.getId()) == null) {
             log.warn("Film not found");
-            throw new ValidationException("Film not found");
+            throw new EntityNotFoundException("Film not found");
         }
         log.info("Updated film: {}", film);
         films.put(film.getId(), film);

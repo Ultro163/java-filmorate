@@ -2,12 +2,19 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
+import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -17,9 +24,9 @@ public class UserController {
     private final Map<Long, User> users = new HashMap<>();
 
     @GetMapping
-    public Collection<User> getUsers() {
+    public List<User> getUsers() {
         log.info("Getting all users");
-        return users.values();
+        return new ArrayList<>(users.values());
     }
 
     @PostMapping
@@ -35,11 +42,11 @@ public class UserController {
     public User updateUser(@Valid @RequestBody User user) {
         if (user.getId() == null) {
             log.warn("User id is null");
-            throw new ValidationException("User id is null");
+            throw new ConditionsNotMetException("User id is null");
         }
         if (users.get(user.getId()) == null) {
             log.warn("User id not found");
-            throw new ValidationException("User not found");
+            throw new EntityNotFoundException("User not found");
         }
         log.info("Updating user: {}", user);
         checkingUserName(user);
