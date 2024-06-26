@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class FilmController {
     public Film updateFilm(@Valid @RequestBody Film film) {
         if (film.getId() == null) {
             log.warn("Film id is null");
-            throw new ConditionsNotMetException("Film id is null");
+            throw new ValidationException("Film id is null");
         }
         if (films.get(film.getId()) == null) {
             log.warn("Film not found");

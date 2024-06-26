@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class UserController {
     public User updateUser(@Valid @RequestBody User user) {
         if (user.getId() == null) {
             log.warn("User id is null");
-            throw new ConditionsNotMetException("User id is null");
+            throw new ValidationException("User id is null");
         }
         if (users.get(user.getId()) == null) {
             log.warn("User id not found");
