@@ -6,11 +6,14 @@ import jakarta.validation.constraints.Past;
 import lombok.Builder;
 import lombok.Data;
 
+
 import java.time.LocalDate;
+import java.util.Set;
 
 /**
  * User.
  */
+
 @Data
 @Builder
 public class User {
@@ -23,4 +26,5 @@ public class User {
     private String name;
     @Past
     private LocalDate birthday;
+    private Set<Long> friends;
 }

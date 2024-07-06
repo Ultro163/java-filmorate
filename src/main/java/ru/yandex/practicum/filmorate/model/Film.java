@@ -8,6 +8,7 @@ import lombok.Data;
 import ru.yandex.practicum.filmorate.annotations.ValidReleaseDate;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 /**
  * Film.
@@ -18,10 +19,11 @@ public class Film {
     private Long id;
     @NotBlank
     private String name;
-    @Size(min = 1, max = 200)
+    @Size(max = 200)
     private String description;
     @ValidReleaseDate
     private LocalDate releaseDate;
     @Positive
     private Integer duration;
+    private Set<Long> likes;
 }
