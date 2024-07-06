@@ -66,7 +66,7 @@ class FilmControllerTest {
     @DirtiesContext
     void testForCreateFilm() throws Exception {
         mockMvc.perform(post("/films").contentType(MediaType.APPLICATION_JSON).content(createJsonFilm()))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test

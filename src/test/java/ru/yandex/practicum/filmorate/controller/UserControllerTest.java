@@ -64,7 +64,7 @@ class UserControllerTest {
     @DirtiesContext
     void testForCreateUser() throws Exception {
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).content(creatJsonUser()))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
