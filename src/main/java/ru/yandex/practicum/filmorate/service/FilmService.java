@@ -16,6 +16,7 @@ public class FilmService {
 
     private final FilmStorage filmStorage;
     private final UserService userService;
+    private final static int DEFAULT_AMOUNT_POPULAR_FILMS = 10;
 
     public List<Film> getAllFilms() {
         return filmStorage.getAllFilms();
@@ -30,7 +31,7 @@ public class FilmService {
         return filmStorage.getAllFilms().stream()
                 .filter(film -> film.getLikes() != null)
                 .sorted((film1, film2) -> Integer.compare(film2.getLikes().size(), film1.getLikes().size()))
-                .limit(count.orElse(10))
+                .limit(count.orElse(DEFAULT_AMOUNT_POPULAR_FILMS))
                 .toList();
 
     }
