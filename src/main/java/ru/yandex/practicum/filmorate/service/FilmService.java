@@ -16,7 +16,7 @@ public class FilmService {
 
     private final FilmStorage filmStorage;
     private final UserService userService;
-    private final static int DEFAULT_AMOUNT_POPULAR_FILMS = 10;
+    private static final int DEFAULT_AMOUNT_POPULAR_FILMS = 10;
 
     public List<Film> getAllFilms() {
         return filmStorage.getAllFilms();
