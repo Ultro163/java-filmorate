@@ -1,8 +1,8 @@
-package ru.yandex.practicum.filmorate.annotations.constraints;
+package ru.yandex.practicum.filmorate.util.annotations.constraints;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import ru.yandex.practicum.filmorate.annotations.ValidReleaseDate;
+import ru.yandex.practicum.filmorate.util.annotations.ValidReleaseDate;
 
 import java.time.LocalDate;
 
