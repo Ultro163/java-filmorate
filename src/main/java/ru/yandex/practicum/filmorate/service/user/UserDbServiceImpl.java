@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.service.user;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -11,69 +11,65 @@ import java.util.List;
 
 @Slf4j
 @Service
-@Qualifier("UserDbServiceImpl")
+@RequiredArgsConstructor
 public class UserDbServiceImpl implements UserService {
 
-    private final UserStorage userStorage;
+    private final UserStorage userDbStorage;
 
     private static final String FRIEND_STATUS_CONFIRMED = "confirmed";
     private static final String FRIEND_STATUS_UNCONFIRMED = "unconfirmed";
 
-    public UserDbServiceImpl(@Qualifier("UserDbStorage") UserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
-
     public List<User> getAllUsers() {
-        return userStorage.getAllUsers();
+        return userDbStorage.getAllUsers();
     }
 
     public User getUserById(long id) {
-        return userStorage.getUserById(id);
+        return userDbStorage.getUserById(id);
     }
 
     public User createUser(User requestUser) {
-        return userStorage.createUser(requestUser);
+        return userDbStorage.createUser(requestUser);
     }
 
     public User updateUser(User user) {
-        userStorage.getUserById(user.getId());
-        return userStorage.updateUser(user);
+        userDbStorage.getUserById(user.getId());
+        return userDbStorage.updateUser(user);
     }
 
     public void addFriends(Long userId, Long friendId) {
         log.info("Adding friend {} to user {}", friendId, userId);
-        userStorage.getUserById(userId);
-        User friend = userStorage.getUserById(friendId);
+        userDbStorage.getUserById(userId);
+        User friend = userDbStorage.getUserById(friendId);
 
         String status = FRIEND_STATUS_UNCONFIRMED;
         if (friend.getFriends().contains(userId)) {
             log.info("User confirmed the friend request");
             status = FRIEND_STATUS_CONFIRMED;
-            userStorage.updateFriendsStatus(friendId, userId, status);
+            userDbStorage.updateFriendsStatus(friendId, userId, status);
         }
-        userStorage.addFriends(userId, friendId, status);
+        userDbStorage.addFriends(userId, friendId, status);
     }
 
     public void deleteFriends(Long userId, Long friendId) {
         log.info("Removing friend {} from user {}", friendId, userId);
-        userStorage.getUserById(userId);
-        userStorage.getUserById(friendId);
+        userDbStorage.getUserById(userId);
+        userDbStorage.getUserById(friendId);
 
-        userStorage.updateFriendsStatus(friendId, userId, FRIEND_STATUS_UNCONFIRMED);
-        userStorage.deleteFriends(userId, friendId);
+        userDbStorage.updateFriendsStatus(friendId, userId, FRIEND_STATUS_UNCONFIRMED);
+        userDbStorage.deleteFriends(userId, friendId);
     }
 
     public List<User> getFriends(long id) {
-        userStorage.getUserById(id);
-        return userStorage.getFriends(id);
+        userDbStorage.getUserById(id);
+        return userDbStorage.getFriends(id);
     }
 
     public List<User> getListMutualFriends(Long userId, Long otherUserId) {
         log.info("Getting list for mutual friends {}", otherUserId);
-        List<Long> otherUserList = new ArrayList<>(userStorage.getUserById(otherUserId).getFriends());
+        List<Long> otherUserList = new ArrayList<>(userDbStorage.getUserById(otherUserId).getFriends());
 
-        return userStorage.getUserById(userId).getFriends().stream()
+        return userDbStorage.getUserById(userId).getFriends().stream()
                 .filter(otherUserList::contains)
-                .map(userStorage::getUserById).toList();
+                .map(userDbStorage::getUserById).toList();
     }
 }

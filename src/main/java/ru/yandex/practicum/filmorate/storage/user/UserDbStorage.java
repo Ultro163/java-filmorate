@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -16,7 +15,6 @@ import java.util.Set;
 
 @Slf4j
 @Repository
-@Qualifier("UserDbStorage")
 public class UserDbStorage extends BaseRepository<User> implements UserStorage {
     private static final String FIND_ALL_USERS_QUERY = "SELECT * FROM users ORDER BY user_id";
     private static final String FIND_USER_BY_ID_QUERY = "SELECT * FROM users WHERE user_id = ?";
