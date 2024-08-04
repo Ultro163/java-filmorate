@@ -1,8 +1,8 @@
-package ru.yandex.practicum.filmorate.annotations;
+package ru.yandex.practicum.filmorate.util.annotations;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import ru.yandex.practicum.filmorate.annotations.constraints.DateConstraintValidator;
+import ru.yandex.practicum.filmorate.util.annotations.constraints.DateConstraintValidator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
