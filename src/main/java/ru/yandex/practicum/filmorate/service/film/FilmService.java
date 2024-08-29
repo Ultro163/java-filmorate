@@ -18,4 +18,6 @@ public interface FilmService {
     void addLikeFilm(long filmId, long userId);
 
     void deleteLikeFromFilm(long filmId, long userId);
+
+    void deleteFilm(long filmId);
 }

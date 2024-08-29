@@ -59,4 +59,9 @@ public class UserInMemoryServiceImpl implements UserService {
                 .filter(otherUserList::contains)
                 .map(inMemoryUserStorage::getUserById).toList();
     }
+
+    @Override
+    public void deleteUser(long userId) {
+        inMemoryUserStorage.deleteUser(userId);
+    }
 }

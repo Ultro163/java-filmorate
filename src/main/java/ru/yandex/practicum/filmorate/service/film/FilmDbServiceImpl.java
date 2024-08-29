@@ -58,4 +58,9 @@ public class FilmDbServiceImpl implements FilmService {
         filmDbStorage.getFilmById(filmId);
         filmDbStorage.deleteLikeFromFilm(filmId, userId);
     }
+
+    @Override
+    public void deleteFilm(long filmId) {
+        filmDbStorage.deleteFilm(filmId);
+    }
 }

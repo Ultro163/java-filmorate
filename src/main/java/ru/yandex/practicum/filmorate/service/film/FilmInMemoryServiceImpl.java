@@ -58,4 +58,10 @@ public class FilmInMemoryServiceImpl implements FilmService {
         inMemoryFilmStorage.getFilmById(filmId);
         inMemoryFilmStorage.deleteLikeFromFilm(filmId, userId);
     }
+
+    @Override
+    public void deleteFilm(long filmId) {
+        inMemoryFilmStorage.deleteFilm(filmId);
+    }
+
 }

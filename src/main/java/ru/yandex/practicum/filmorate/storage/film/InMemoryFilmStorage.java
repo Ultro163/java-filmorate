@@ -105,6 +105,12 @@ public class InMemoryFilmStorage implements FilmStorage {
         log.info("Removed like for film {} by the user {}", filmId, userId);
     }
 
+    @Override
+    public void deleteFilm(long filmId) {
+        getFilmById(filmId);
+        films.remove(filmId);
+    }
+
     private Long getNextId() {
         long currentId = films.keySet().stream()
                 .mapToLong(id -> id)
