@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS reviews_users_likes;
+DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS genre_film;
 DROP TABLE IF EXISTS film_likes_users;
 DROP TABLE IF EXISTS films;
@@ -50,4 +52,20 @@ CREATE TABLE IF NOT EXISTS film_likes_users (
     film_id BIGINT REFERENCES films(film_id) ON DELETE CASCADE,
     user_id BIGINT REFERENCES users(user_id) ON DELETE CASCADE,
     CONSTRAINT unique_likes UNIQUE (film_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS reviews(
+    review_id  BIGINT PRIMARY KEY AUTO_INCREMENT,
+    content     VARCHAR(200),
+    is_positive BOOLEAN,
+    user_id     BIGINT REFERENCES users (user_id),
+    film_id     BIGINT REFERENCES films (film_id),
+    useful      INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS reviews_users_likes(
+    review_id BIGINT REFERENCES REVIEWS (REVIEW_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+    user_id BIGINT REFERENCES USERS (USER_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+    like_or_dislike ENUM ('like', 'dislike'),
+    CONSTRAINT PK_REVIEWS_USERS_LIKES PRIMARY KEY (review_id, user_id)
 );
