@@ -5,8 +5,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.model.enums.EventTypes;
+import ru.yandex.practicum.filmorate.model.enums.OperationTypes;
 import ru.yandex.practicum.filmorate.storage.BaseRepository;
+import ru.yandex.practicum.filmorate.storage.history.HistoryDbStorage;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +19,7 @@ import java.util.Optional;
 @Repository
 public class ReviewDbStorage extends BaseRepository<Review> implements ReviewStorage {
 
+    private final HistoryDbStorage historyDbStorage;
     private static final String LIKE = "like";
     private static final String DISLIKE = "dislike";
     private static final String FIND_ALL_REVIEW_QUERY = """
@@ -61,8 +66,9 @@ public class ReviewDbStorage extends BaseRepository<Review> implements ReviewSto
             WHERE review_id = ? AND user_id = ?""";
 
 
-    public ReviewDbStorage(JdbcTemplate jdbc, RowMapper<Review> mapper) {
+    public ReviewDbStorage(JdbcTemplate jdbc, RowMapper<Review> mapper, HistoryDbStorage historyDbStorage) {
         super(jdbc, mapper);
+        this.historyDbStorage = historyDbStorage;
     }
 
     @Override
@@ -100,6 +106,7 @@ public class ReviewDbStorage extends BaseRepository<Review> implements ReviewSto
         );
         review.setReviewId(id);
         log.info("Отзыв добавлен: {}", review);
+        saveHistory(review.getReviewId(), review.getUserId(), OperationTypes.ADD);
         return review;
     }
 
@@ -116,6 +123,7 @@ public class ReviewDbStorage extends BaseRepository<Review> implements ReviewSto
                 review.getReviewId()
         );
         log.info("Отзыв обновлён: {}", review);
+        saveHistory(review.getReviewId(), review.getUserId(), OperationTypes.UPDATE);
         return review;
     }
 
@@ -124,6 +132,7 @@ public class ReviewDbStorage extends BaseRepository<Review> implements ReviewSto
         log.info("Удаление отзыва: {}", id);
         delete(DELETE_REVIEW_QUERY, id);
         log.info("Отзыв удален: {}", id);
+        saveHistory(id, getReview(id).getUserId(), OperationTypes.REMOVE);
     }
 
     @Override
@@ -177,5 +186,15 @@ public class ReviewDbStorage extends BaseRepository<Review> implements ReviewSto
     private boolean isLikeOrDislike(Long reviewId, Long userId) {
         Optional<String> like = findOneInstances(FIND_LIKE_OR_DISLIKE_QUERY, reviewId, userId);
         return like.isPresent();
+    }
+
+    private void saveHistory(Long id, Long userId, OperationTypes operationTypes) {
+        historyDbStorage.addEvent(Event.builder()
+                .userId(userId)
+                .timestamp(System.currentTimeMillis())
+                .eventType(EventTypes.REVIEW)
+                .operation(operationTypes)
+                .entityId(id)
+                .build());
     }
 }
