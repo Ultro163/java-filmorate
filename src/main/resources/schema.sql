@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS friendship;
 DROP TABLE IF EXISTS genres;
 DROP TABLE IF EXISTS rating_mpa;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS history_actions;
 
 CREATE TABLE IF NOT EXISTS users (
     user_id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -68,4 +69,14 @@ CREATE TABLE IF NOT EXISTS reviews_users_likes(
     user_id BIGINT REFERENCES USERS (USER_ID) ON DELETE CASCADE ON UPDATE CASCADE,
     like_or_dislike ENUM ('like', 'dislike'),
     CONSTRAINT PK_REVIEWS_USERS_LIKES PRIMARY KEY (review_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS history_actions (
+    event_id BIGINT NOT NULL AUTO_INCREMENT,
+    user_id BIGINT,
+    time_action BIGINT,
+    type VARCHAR(20),
+    operation VARCHAR(20),
+    entity_id BIGINT,
+    CONSTRAINT HISTORY_PK PRIMARY KEY (event_id)
 );

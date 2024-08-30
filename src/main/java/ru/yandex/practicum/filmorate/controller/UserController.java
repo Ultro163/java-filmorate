@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.history.FeedService;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 
 import java.util.List;
@@ -23,6 +25,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userDbServiceImpl;
+    private final FeedService feedService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -71,4 +74,15 @@ public class UserController {
     public List<User> getUsersWithFriends(@PathVariable long id, @PathVariable long otherId) {
         return userDbServiceImpl.getListMutualFriends(id, otherId);
     }
+
+    @GetMapping("/{id}/feed")
+    public List<Event> getFeed(@PathVariable("id") long id) {
+        return feedService.getFeed(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable("id") long id) {
+        userDbServiceImpl.deleteUser(id);
+    }
+
 }
