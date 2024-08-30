@@ -130,9 +130,9 @@ public class ReviewDbStorage extends BaseRepository<Review> implements ReviewSto
     @Override
     public void deleteReview(Long id) {
         log.info("Удаление отзыва: {}", id);
+        saveHistory(id, getReview(id).getUserId(), OperationTypes.REMOVE);
         delete(DELETE_REVIEW_QUERY, id);
         log.info("Отзыв удален: {}", id);
-        saveHistory(id, getReview(id).getUserId(), OperationTypes.REMOVE);
     }
 
     @Override
