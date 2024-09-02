@@ -28,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebAppConfiguration
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class FilmControllerTest {
 
     @Autowired
@@ -59,7 +60,6 @@ class FilmControllerTest {
     }
 
     @Test
-    @DirtiesContext
     void testForGetFilms() throws Exception {
         mockMvc.perform(post("/films").contentType(MediaType.APPLICATION_JSON).content(createJsonFilm()));
 
@@ -70,14 +70,12 @@ class FilmControllerTest {
     }
 
     @Test
-    @DirtiesContext
     void testForCreateFilm() throws Exception {
         mockMvc.perform(post("/films").contentType(MediaType.APPLICATION_JSON).content(createJsonFilm()))
                 .andExpect(status().isCreated());
     }
 
     @Test
-    @DirtiesContext
     void testForUpdateFilm() throws Exception {
         mockMvc.perform(post("/films").contentType(MediaType.APPLICATION_JSON).content(createJsonFilm()));
 

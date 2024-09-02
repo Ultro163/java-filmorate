@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         FilmDbStorage.class, FilmRowMapper.class, GenreDbStorage.class, GenreRowMapper.class, GenreService.class,
         MpaDbStorage.class, MpaRowMapper.class, MpaService.class, FilmValidator.class, HistoryDbStorage.class,
         FeedService.class, EventRowMapper.class})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class UserDbStorageTest {
 
     private final UserDbStorage userDbStorage;
@@ -73,7 +74,6 @@ class UserDbStorageTest {
     }
 
     @Test
-    @DirtiesContext
     void getUserById() {
         addUserInDb();
         Optional<User> userOptional = Optional.ofNullable(userDbStorage.getUserById(1));
@@ -86,7 +86,6 @@ class UserDbStorageTest {
     }
 
     @Test
-    @DirtiesContext
     void createUser() {
         final User user = User.builder()
                 .email("Skuf@maila.net")
@@ -101,7 +100,6 @@ class UserDbStorageTest {
     }
 
     @Test
-    @DirtiesContext
     void updateUser() {
         addUserInDb();
         User user = User.builder()
@@ -117,7 +115,6 @@ class UserDbStorageTest {
     }
 
     @Test
-    @DirtiesContext
     void addFriends() {
         addTwoUserInDb();
         userDbStorage.addFriends(1L, 2L, "unconfirmed");
@@ -125,7 +122,6 @@ class UserDbStorageTest {
     }
 
     @Test
-    @DirtiesContext
     void deleteFriends() {
         addTwoUserInDb();
         userDbStorage.addFriends(1L, 2L, "unconfirmed");
@@ -135,7 +131,6 @@ class UserDbStorageTest {
     }
 
     @Test
-    @DirtiesContext
     void getFriends() {
         addTwoUserInDb();
         userDbStorage.addFriends(1L, 2L, "unconfirmed");

@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         FilmDbStorage.class, FilmRowMapper.class, GenreDbStorage.class, GenreRowMapper.class, GenreService.class,
         MpaDbStorage.class, MpaRowMapper.class, MpaService.class, FilmValidator.class, HistoryDbStorage.class,
         FeedService.class, EventRowMapper.class})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class FilmDbStorageTest {
 
     private final FilmDbStorage filmDbStorage;
@@ -70,7 +71,6 @@ class FilmDbStorageTest {
     }
 
     @Test
-    @DirtiesContext
     void getFilmById() {
         addFilmInDb();
         Optional<Film> filmOptional = Optional.ofNullable(filmDbStorage.getFilmById(1));
@@ -83,7 +83,6 @@ class FilmDbStorageTest {
     }
 
     @Test
-    @DirtiesContext
     void createFilm() {
         Set<Genre> genres = new HashSet<>();
         genres.add(new Genre(1, "Комедия"));
@@ -101,7 +100,6 @@ class FilmDbStorageTest {
     }
 
     @Test
-    @DirtiesContext
     void updateFilm() {
         addFilmInDb();
         Set<Genre> genres = new HashSet<>();
@@ -125,7 +123,6 @@ class FilmDbStorageTest {
     }
 
     @Test
-    @DirtiesContext
     void addLikeFilm() {
         addFilmInDb();
         addUserInDb();
@@ -134,7 +131,6 @@ class FilmDbStorageTest {
     }
 
     @Test
-    @DirtiesContext
     void deleteLikeFromFilm() {
         addFilmInDb();
         addUserInDb();
