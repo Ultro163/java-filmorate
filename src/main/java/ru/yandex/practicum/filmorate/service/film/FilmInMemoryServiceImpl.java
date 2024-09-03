@@ -37,6 +37,11 @@ public class FilmInMemoryServiceImpl implements FilmService {
                 .toList();
     }
 
+    @Override
+    public List<Film> getFilmsWithSortedDirector(Long directorId, String sortBy) {
+        return List.of();
+    }
+
     public Film createFilm(Film film) {
         return inMemoryFilmStorage.createFilm(film);
     }

@@ -8,10 +8,12 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.director.DirectorService;
 import ru.yandex.practicum.filmorate.service.genre.GenreService;
 import ru.yandex.practicum.filmorate.service.history.FeedService;
 import ru.yandex.practicum.filmorate.service.mpa.MpaService;
 import ru.yandex.practicum.filmorate.service.user.UserDbServiceImpl;
+import ru.yandex.practicum.filmorate.storage.director.DirectorDbStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.genre.GenreDbStorage;
 import ru.yandex.practicum.filmorate.storage.history.HistoryDbStorage;
@@ -35,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ContextConfiguration(classes = {UserDbStorage.class, UserRowMapper.class, UserDbServiceImpl.class,
         FilmDbStorage.class, FilmRowMapper.class, GenreDbStorage.class, GenreRowMapper.class, GenreService.class,
         MpaDbStorage.class, MpaRowMapper.class, MpaService.class, FilmValidator.class, HistoryDbStorage.class,
-        FeedService.class, EventRowMapper.class})
+        FeedService.class, EventRowMapper.class, DirectorService.class, DirectorDbStorage.class, DirectorRowMapper.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class UserDbStorageTest {
 

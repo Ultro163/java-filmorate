@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.enums.EventTypes;
 import ru.yandex.practicum.filmorate.model.enums.OperationTypes;
+import ru.yandex.practicum.filmorate.service.director.DirectorService;
 import ru.yandex.practicum.filmorate.service.genre.GenreService;
 import ru.yandex.practicum.filmorate.service.mpa.MpaService;
 import ru.yandex.practicum.filmorate.storage.BaseRepository;
@@ -39,6 +40,10 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             VALUES (?, ?, ?, ?, ?)
             """;
     private static final String INSERT_GENRE_FILM_QUERY = "INSERT INTO genre_film (film_id,genre_id) VALUES (?,?)";
+    private static final String INSERT_DIRECTORS_FILM_QUERY = """
+            INSERT INTO films_director (film_id, director_id)
+            VALUES (?, ?)
+            """;
     private static final String UPDATE_FILM_QUERY = """
             UPDATE films SET name = ?, description = ?, release_date = ?,
             duration = ?, rating_id = ?
@@ -47,21 +52,24 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             DELETE FROM film_likes_users WHERE film_id = ? AND user_id = ?
             """;
     private static final String DELETE_GENRE_FILM_QUERY = "DELETE FROM genre_film WHERE film_id = ?";
+    private static final String DELETE_DIRECTORS_FILM_QUERY = "DELETE FROM films_director WHERE film_id = ?";
     private static final String DELETE_FILM_QUERY = "DELETE FROM FILMS WHERE FILM_ID = ?";
     private static final String DELETE_FILM_REVIEW_QUERY = "DELETE FROM REVIEWS WHERE FILM_ID = ?";
 
     private final HistoryDbStorage historyDbStorage;
     private final MpaService mpaService;
     private final GenreService genreService;
+    private final DirectorService directorService;
     private final FilmValidator filmValidator;
 
     public FilmDbStorage(JdbcTemplate jdbc, RowMapper<Film> mapper, HistoryDbStorage historyDbStorage,
                          MpaService mpaService,
-                         GenreService genreService, FilmValidator filmValidator) {
+                         GenreService genreService, DirectorService directorService, FilmValidator filmValidator) {
         super(jdbc, mapper);
         this.historyDbStorage = historyDbStorage;
         this.mpaService = mpaService;
         this.genreService = genreService;
+        this.directorService = directorService;
         this.filmValidator = filmValidator;
     }
 
@@ -71,6 +79,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
         films.forEach(film -> film.setMpa(mpaService.getMpaById(film.getMpa().getId())));
         films.forEach(film -> film.setGenres(genreService.getGenresForFilm(film.getId())));
         films.forEach(film -> film.setLikes(getUsersIdWhoLikeFilm(film.getId())));
+        films.forEach(film -> film.setDirectors(directorService.getDirectorsForFilm(film.getId())));
         return films;
     }
 
@@ -85,6 +94,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
         film.setGenres(genreService.getGenresForFilm(film.getId()));
         film.setMpa(mpaService.getMpaById(film.getMpa().getId()));
         film.setLikes(getUsersIdWhoLikeFilm(id));
+        film.setDirectors(directorService.getDirectorsForFilm(film.getId()));
         return film;
     }
 
@@ -100,6 +110,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
                 film.getMpa().getId()
         );
         film.getGenres().forEach(genre -> insertData(INSERT_GENRE_FILM_QUERY, id, genre.getId()));
+        film.getDirectors().forEach(director -> insertData(INSERT_DIRECTORS_FILM_QUERY, id, director.getId()));
         film.setId(id);
         film.setMpa(mpaService.getMpaById(film.getMpa().getId()));
         film.setGenres(genreService.getGenresForFilm(id));
@@ -124,6 +135,11 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             delete(DELETE_GENRE_FILM_QUERY, film.getId());
             film.getGenres().forEach(genre -> insertData(INSERT_GENRE_FILM_QUERY, film.getId(), genre.getId()));
         }
+        if (film.getDirectors() != null) {
+            delete(DELETE_DIRECTORS_FILM_QUERY, film.getId());
+            film.getDirectors().forEach(director -> insertData(INSERT_DIRECTORS_FILM_QUERY, film.getId(), director.getId()));
+        }
+        film.setDirectors(directorService.getDirectorsForFilm(film.getId()));
         film.setLikes(getUsersIdWhoLikeFilm(film.getId()));
         log.info("Updated film: {}", film);
         return film;
