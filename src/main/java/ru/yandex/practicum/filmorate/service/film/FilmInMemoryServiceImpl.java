@@ -27,7 +27,7 @@ public class FilmInMemoryServiceImpl implements FilmService {
         return inMemoryFilmStorage.getFilmById(id);
     }
 
-    public List<Film> getPopularFilms(Integer count) {
+    public List<Film> getPopularFilms(Integer count, Integer genreId, Integer year) {
         log.info("Get popular films in memory app");
         Optional<Integer> optionalCount = Optional.ofNullable(count);
         return inMemoryFilmStorage.getAllFilms().stream()
