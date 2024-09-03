@@ -170,7 +170,9 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     }
 
     public void deleteFilm(long filmId) {
+        log.info("Removing film with ID = {}", filmId);
         delete(DELETE_FILM_REVIEW_QUERY, filmId);
         delete(DELETE_FILM_QUERY, filmId);
+        log.info("Removed film with ID = {}", filmId);
     }
 }

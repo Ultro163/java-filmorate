@@ -33,30 +33,39 @@ public class DirectorDbStorage extends BaseRepository<Director> {
     }
 
     public List<Director> getAllDirectors() {
+        log.info("Getting all directors");
         return findMany(GET_ALL_DIRECTOR_QUERY);
     }
 
     public Director getDirector(Long id) {
+        log.info("Getting director by ID = {}", id);
         return findOne(GET_DIRECTOR_QUERY, id).orElseThrow(() -> new EntityNotFoundException("Director not found"));
     }
 
     public Director createDirector(Director director) {
+        log.info("Creating director {}", director);
         long id = insert(ADD_DIRECTOR_QUERY,
                 director.getName());
         director.setId(id);
+        log.info("Created director {}", director);
         return director;
     }
 
     public Director updateDirector(Director director) {
+        log.info("Updating director {}", director);
         update(UPDATE_DIRECTOR_QUERY, director.getName(), director.getId());
+        log.info("Updated director {}", director);
         return director;
     }
 
     public void deleteDirector(Long id) {
+        log.info("Removing director with ID = {}", id);
         delete(DELETE_DIRECTOR_QUERY, id);
+        log.info("Removed director with ID = {}", id);
     }
 
     public Set<Director> getDirectorsForFilm(Long fimId) {
+        log.info("Get directors for film with ID = {}", fimId);
         return new HashSet<>(findMany(GET_DIRECTORS_FOR_FILM_QUERY, fimId));
     }
 }
