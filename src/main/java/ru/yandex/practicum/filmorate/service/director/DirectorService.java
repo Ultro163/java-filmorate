@@ -19,7 +19,6 @@ public class DirectorService {
 
     private final DirectorDbStorage directorDbStorage;
 
-
     public List<Director> getAllDirectors() {
         return directorDbStorage.getAllDirectors();
     }
