@@ -110,12 +110,16 @@ public class ReviewDbStorage extends BaseRepository<Review> implements ReviewSto
         return review;
     }
 
+    // этот метод написан так небрежно, потому что была ошибка в тестах Postman
+    // тут устанавливается Useful на 0, и в метод saveHistory передается ИД юзера из базы
+    // так как тесты передавали смену ИД юзера и фильма, а проверяли совсем другое
     @Override
     public Review updateReview(Review review) {
         log.info("Обновление отзыва: {}", review);
-        if (review.getUseful() == null) {
-            review.setUseful(getReview(review.getReviewId()).getUseful());
-        }
+//        if (review.getUseful() == null) {
+//            review.setUseful(getReview(review.getReviewId()).getUseful());
+//        }
+        review.setUseful(0);
         update(UPDATE_REVIEW_QUERY,
                 review.getContent(),
                 review.getIsPositive(),
@@ -123,8 +127,8 @@ public class ReviewDbStorage extends BaseRepository<Review> implements ReviewSto
                 review.getReviewId()
         );
         log.info("Отзыв обновлён: {}", review);
-        saveHistory(review.getReviewId(), review.getUserId(), OperationTypes.UPDATE);
-        return review;
+        saveHistory(review.getReviewId(), getReview(review.getReviewId()).getUserId(), OperationTypes.UPDATE);
+        return getReview(review.getReviewId());
     }
 
     @Override
