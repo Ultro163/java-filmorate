@@ -84,6 +84,11 @@ public class FilmDbServiceImpl implements FilmService {
         return filmDbStorage.getCommonFilms(userId, friendId);
     }
 
+    @Override
+    public List<Film> getRecommendationsFilmsForUser(Long id) {
+        return filmDbStorage.getRecommendationsFilmsForUser(id);
+    }
+
     public Film createFilm(Film film) {
         return filmDbStorage.createFilm(film);
     }
