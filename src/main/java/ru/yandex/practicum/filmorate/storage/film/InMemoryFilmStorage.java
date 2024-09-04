@@ -54,6 +54,11 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.get(id);
     }
 
+    @Override
+    public List<Film> getCommonFilms(Long userId, Long friendId) {
+        return List.of();
+    }
+
     public Film createFilm(Film film) {
         log.info("Creating film: {}", film);
         mpaMap.values().stream().filter(mpa -> film.getMpa().getId() == mpa.getId()).findFirst()
