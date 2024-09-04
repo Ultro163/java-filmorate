@@ -48,6 +48,25 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             JOIN friend_films as ff ON f.film_id = ff.film_id
             ORDER BY uf.cnt DESC
             """;
+    private static final String FIND_RECOMMENDATIONS_FOR_USER_QUERY = """
+            WITH prep AS (
+                SELECT l1.USER_ID, COUNT(*) AS cnt
+                FROM film_likes_users l1
+                INNER JOIN film_likes_users l2 ON l2.FILM_ID = l1.FILM_ID
+                AND l2.USER_ID = ?
+                WHERE l1.USER_ID != ?
+                GROUP BY l1.USER_ID
+                ORDER BY COUNT(*) DESC
+                )
+            SELECT f.*
+            FROM film_likes_users l1
+            INNER JOIN prep p ON p.USER_ID = l1.USER_ID
+            LEFT JOIN film_likes_users l2 ON l2.FILM_ID = l1.FILM_ID
+                               AND l2.USER_ID = ?
+            INNER JOIN films f ON f.FILM_ID = l1.FILM_ID
+            WHERE l2.FILM_ID IS NULL
+            ORDER BY p.cnt DESC
+            """;
     private static final String ADD_LIKE_FILM_QUERY = """
             INSERT INTO film_likes_users (film_id, user_id)
             VALUES (?, ?)
@@ -113,6 +132,11 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     @Override
     public List<Film> getCommonFilms(Long userId, Long friendId) {
         return fillFilmMetadata(findMany(FIND_COMMON_FILMS_QUERY, userId, friendId));
+    }
+
+    @Override
+    public List<Film> getRecommendationsFilmsForUser(Long id) {
+        return fillFilmMetadata(findMany(FIND_RECOMMENDATIONS_FOR_USER_QUERY, id, id, id));
     }
 
     public Film createFilm(Film film) {

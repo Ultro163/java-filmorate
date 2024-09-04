@@ -18,6 +18,8 @@ public interface FilmService {
 
     List<Film> getCommonFilms(Long userId, Long friendId);
 
+    List<Film> getRecommendationsFilmsForUser(Long id);
+
     Film createFilm(Film film);
 
     Film updateFilm(Film film);
