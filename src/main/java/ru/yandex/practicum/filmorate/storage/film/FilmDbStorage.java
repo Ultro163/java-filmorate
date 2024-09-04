@@ -31,6 +31,23 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             FROM film_likes_users
             WHERE film_id = ?
             """;
+    private static final String FIND_COMMON_FILMS_QUERY = """
+            with user_films as (SELECT film_id, count(*) as cnt
+                                FROM film_likes_users
+                                WHERE user_id = ?
+                                GROUP BY film_id
+                                ),
+                 friend_films as (SELECT film_id, count(*) as cnt
+                                 FROM film_likes_users
+                                 WHERE user_id = ?
+                                 GROUP BY film_id
+                                 )
+            SELECT f.*
+            FROM films as f
+            JOIN user_films as uf ON f.film_id = uf.film_id
+            JOIN friend_films as ff ON f.film_id = ff.film_id
+            ORDER BY uf.cnt DESC
+            """;
     private static final String ADD_LIKE_FILM_QUERY = """
             INSERT INTO film_likes_users (film_id, user_id)
             VALUES (?, ?)
@@ -75,12 +92,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
 
     public List<Film> getAllFilms() {
         log.info("Getting all films");
-        List<Film> films = findMany(FIND_ALL_FILMS_QUERY);
-        films.forEach(film -> film.setMpa(mpaService.getMpaById(film.getMpa().getId())));
-        films.forEach(film -> film.setGenres(genreService.getGenresForFilm(film.getId())));
-        films.forEach(film -> film.setLikes(getUsersIdWhoLikeFilm(film.getId())));
-        films.forEach(film -> film.setDirectors(directorService.getDirectorsForFilm(film.getId())));
-        return films;
+        return fillFilmMetadata(findMany(FIND_ALL_FILMS_QUERY));
     }
 
     public Set<Long> getUsersIdWhoLikeFilm(long filmId) {
@@ -96,6 +108,11 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
         film.setLikes(getUsersIdWhoLikeFilm(id));
         film.setDirectors(directorService.getDirectorsForFilm(film.getId()));
         return film;
+    }
+
+    @Override
+    public List<Film> getCommonFilms(Long userId, Long friendId) {
+        return fillFilmMetadata(findMany(FIND_COMMON_FILMS_QUERY, userId, friendId));
     }
 
     public Film createFilm(Film film) {
@@ -174,5 +191,13 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
         delete(DELETE_FILM_REVIEW_QUERY, filmId);
         delete(DELETE_FILM_QUERY, filmId);
         log.info("Removed film with ID = {}", filmId);
+    }
+
+    private List<Film> fillFilmMetadata(List<Film> films) {
+        films.forEach(film -> film.setMpa(mpaService.getMpaById(film.getMpa().getId())));
+        films.forEach(film -> film.setGenres(genreService.getGenresForFilm(film.getId())));
+        films.forEach(film -> film.setLikes(getUsersIdWhoLikeFilm(film.getId())));
+        films.forEach(film -> film.setDirectors(directorService.getDirectorsForFilm(film.getId())));
+        return films;
     }
 }

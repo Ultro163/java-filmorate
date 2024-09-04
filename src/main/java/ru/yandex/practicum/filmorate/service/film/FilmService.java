@@ -16,6 +16,8 @@ public interface FilmService {
 
     List<Film> searchFilms(String query, String by);
 
+    List<Film> getCommonFilms(Long userId, Long friendId);
+
     Film createFilm(Film film);
 
     Film updateFilm(Film film);

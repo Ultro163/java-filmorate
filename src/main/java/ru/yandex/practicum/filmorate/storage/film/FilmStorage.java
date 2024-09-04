@@ -10,6 +10,8 @@ public interface FilmStorage {
 
     Film getFilmById(long id);
 
+    List<Film> getCommonFilms(Long userId, Long friendId);
+
     Film createFilm(Film film);
 
     Film updateFilm(Film film);
