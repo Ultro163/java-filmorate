@@ -54,8 +54,7 @@ CREATE TABLE IF NOT EXISTS genre_film (
 
 CREATE TABLE IF NOT EXISTS film_likes_users (
     film_id BIGINT REFERENCES films(film_id) ON DELETE CASCADE,
-    user_id BIGINT REFERENCES users(user_id) ON DELETE CASCADE,
-    CONSTRAINT unique_likes UNIQUE (film_id, user_id)
+    user_id BIGINT REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS reviews(

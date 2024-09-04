@@ -94,6 +94,7 @@ public class FilmDbServiceImpl implements FilmService {
     }
 
     public Film updateFilm(Film film) {
+        getFilmById(film.getId());
         return filmDbStorage.updateFilm(film);
     }
 

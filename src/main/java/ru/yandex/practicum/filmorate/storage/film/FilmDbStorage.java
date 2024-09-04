@@ -182,6 +182,8 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
         }
         film.setDirectors(directorService.getDirectorsForFilm(film.getId()));
         film.setLikes(getUsersIdWhoLikeFilm(film.getId()));
+        film.setGenres(genreService.getGenresForFilm(film.getId()));
+        film.setMpa(mpaService.getMpaById(film.getMpa().getId()));
         log.info("Updated film: {}", film);
         return film;
     }
