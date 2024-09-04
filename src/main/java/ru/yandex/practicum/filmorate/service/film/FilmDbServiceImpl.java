@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.service.genre.GenreService;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -56,6 +57,25 @@ public class FilmDbServiceImpl implements FilmService {
                     case null -> 0;
                     default -> throw new ValidationException("Invalid value: " + sortBy);
                 })
+                .toList();
+    }
+
+    @Override
+    public List<Film> searchFilms(String query, String by) {
+        String[] sort = by.split(",");
+        boolean director = Arrays.asList(sort).contains("director");
+        boolean title = Arrays.asList(sort).contains("title");
+
+        return getAllFilms().stream()
+                .filter(film -> {
+                    boolean matchesDirector = film.getDirectors().stream()
+                            .anyMatch(director1 -> director1.getName().toLowerCase().contains(query.toLowerCase()));
+
+                    boolean matchesTitle = film.getName().toLowerCase().contains(query.toLowerCase());
+
+                    return (title && matchesTitle) || (director && matchesDirector);
+                })
+                .sorted((film1, film2) -> Integer.compare(film2.getLikes().size(), film1.getLikes().size()))
                 .toList();
     }
 

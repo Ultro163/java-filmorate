@@ -42,6 +42,11 @@ public class FilmInMemoryServiceImpl implements FilmService {
         return List.of();
     }
 
+    @Override
+    public List<Film> searchFilms(String query, String by) {
+        return List.of();
+    }
+
     public Film createFilm(Film film) {
         return inMemoryFilmStorage.createFilm(film);
     }

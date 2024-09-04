@@ -14,6 +14,8 @@ public interface FilmService {
 
     List<Film> getFilmsWithSortedDirector(Long directorId, String sortBy);
 
+    List<Film> searchFilms(String query, String by);
+
     Film createFilm(Film film);
 
     Film updateFilm(Film film);

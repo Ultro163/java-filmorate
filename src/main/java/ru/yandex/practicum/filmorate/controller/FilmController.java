@@ -41,6 +41,11 @@ public class FilmController {
         return filmDbServiceImpl.getFilmsWithSortedDirector(directorId, sortBy);
     }
 
+    @GetMapping("/search")
+    public List<Film> searchFilms(@RequestParam String query, @RequestParam String by) {
+        return filmDbServiceImpl.searchFilms(query, by);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Film createFilm(@Valid @RequestBody Film film) {
