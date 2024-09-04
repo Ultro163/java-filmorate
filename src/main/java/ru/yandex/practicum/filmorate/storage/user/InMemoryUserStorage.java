@@ -87,6 +87,12 @@ public class InMemoryUserStorage implements UserStorage {
         log.warn("this method is not supported by this class");
     }
 
+    @Override
+    public void deleteUser(long userId) {
+        getUserById(userId);
+        users.remove(userId);
+    }
+
     private Long getNextId() {
         long currentId = users.keySet().stream()
                 .mapToLong(id -> id)

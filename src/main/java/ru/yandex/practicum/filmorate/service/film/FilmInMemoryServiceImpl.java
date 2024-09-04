@@ -27,7 +27,7 @@ public class FilmInMemoryServiceImpl implements FilmService {
         return inMemoryFilmStorage.getFilmById(id);
     }
 
-    public List<Film> getPopularFilms(Integer count) {
+    public List<Film> getPopularFilms(Integer count, Integer genreId, Integer year) {
         log.info("Get popular films in memory app");
         Optional<Integer> optionalCount = Optional.ofNullable(count);
         return inMemoryFilmStorage.getAllFilms().stream()
@@ -35,6 +35,26 @@ public class FilmInMemoryServiceImpl implements FilmService {
                 .sorted((film1, film2) -> Integer.compare(film2.getLikes().size(), film1.getLikes().size()))
                 .limit(optionalCount.orElse(DEFAULT_AMOUNT_POPULAR_FILMS))
                 .toList();
+    }
+
+    @Override
+    public List<Film> getFilmsWithSortedDirector(Long directorId, String sortBy) {
+        return List.of();
+    }
+
+    @Override
+    public List<Film> searchFilms(String query, String by) {
+        return List.of();
+    }
+
+    @Override
+    public List<Film> getCommonFilms(Long userId, Long friendId) {
+        return List.of();
+    }
+
+    @Override
+    public List<Film> getRecommendationsFilmsForUser(Long id) {
+        return List.of();
     }
 
     public Film createFilm(Film film) {
@@ -58,4 +78,10 @@ public class FilmInMemoryServiceImpl implements FilmService {
         inMemoryFilmStorage.getFilmById(filmId);
         inMemoryFilmStorage.deleteLikeFromFilm(filmId, userId);
     }
+
+    @Override
+    public void deleteFilm(long filmId) {
+        inMemoryFilmStorage.deleteFilm(filmId);
+    }
+
 }

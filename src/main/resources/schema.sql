@@ -1,10 +1,16 @@
+DROP TABLE IF EXISTS reviews_users_likes;
+DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS genre_film;
 DROP TABLE IF EXISTS film_likes_users;
+DROP TABLE IF EXISTS films_director;
+DROP TABLE IF EXISTS directors;
 DROP TABLE IF EXISTS films;
 DROP TABLE IF EXISTS friendship;
 DROP TABLE IF EXISTS genres;
 DROP TABLE IF EXISTS rating_mpa;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS history_actions;
+
 
 CREATE TABLE IF NOT EXISTS users (
     user_id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -48,6 +54,42 @@ CREATE TABLE IF NOT EXISTS genre_film (
 
 CREATE TABLE IF NOT EXISTS film_likes_users (
     film_id BIGINT REFERENCES films(film_id) ON DELETE CASCADE,
-    user_id BIGINT REFERENCES users(user_id) ON DELETE CASCADE,
-    CONSTRAINT unique_likes UNIQUE (film_id, user_id)
+    user_id BIGINT REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS reviews(
+    review_id  BIGINT PRIMARY KEY AUTO_INCREMENT,
+    content     VARCHAR(200),
+    is_positive BOOLEAN,
+    user_id     BIGINT REFERENCES users (user_id),
+    film_id     BIGINT REFERENCES films (film_id),
+    useful      INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS reviews_users_likes(
+    review_id BIGINT REFERENCES REVIEWS (REVIEW_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+    user_id BIGINT REFERENCES USERS (USER_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+    like_or_dislike ENUM ('like', 'dislike'),
+    CONSTRAINT PK_REVIEWS_USERS_LIKES PRIMARY KEY (review_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS history_actions (
+    event_id BIGINT NOT NULL AUTO_INCREMENT,
+    user_id BIGINT,
+    time_action BIGINT,
+    type VARCHAR(20),
+    operation VARCHAR(20),
+    entity_id BIGINT,
+    CONSTRAINT HISTORY_PK PRIMARY KEY (event_id)
+);
+
+CREATE TABLE IF NOT EXISTS directors (
+    director_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name varchar
+);
+
+CREATE TABLE IF NOT EXISTS films_director (
+    film_id BIGINT REFERENCES films(film_id) ON DELETE CASCADE ,
+    director_id BIGINT REFERENCES directors(director_id) ON DELETE CASCADE ,
+    CONSTRAINT films_director_unique UNIQUE (film_id,director_id)
 );

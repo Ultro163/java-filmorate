@@ -5,8 +5,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.enums.EventTypes;
+import ru.yandex.practicum.filmorate.model.enums.OperationTypes;
 import ru.yandex.practicum.filmorate.storage.BaseRepository;
+import ru.yandex.practicum.filmorate.storage.history.HistoryDbStorage;
 
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +20,8 @@ import java.util.Set;
 @Slf4j
 @Repository
 public class UserDbStorage extends BaseRepository<User> implements UserStorage {
+
+    private final HistoryDbStorage historyDbStorage;
     private static final String FIND_ALL_USERS_QUERY = "SELECT * FROM users ORDER BY user_id";
     private static final String FIND_USER_BY_ID_QUERY = "SELECT * FROM users WHERE user_id = ?";
     private static final String FIND_FRIENDS_QUERY = """
@@ -39,9 +45,12 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
             UPDATE friendship SET status = ? WHERE user1_id = ? AND user2_id = ?
             """;
     private static final String DELETE_FRIEND_QUERY = "DELETE FROM friendship WHERE user1_id = ? AND user2_id = ?";
+    private static final String DELETE_USER_QUERY = "DELETE FROM users WHERE user_id = ?";
+    private static final String DELETE_USER_REVIEW_QUERY = "DELETE FROM reviews WHERE user_id = ?";
 
-    public UserDbStorage(JdbcTemplate jdbc, RowMapper<User> mapper) {
+    public UserDbStorage(JdbcTemplate jdbc, RowMapper<User> mapper, HistoryDbStorage historyDbStorage) {
         super(jdbc, mapper);
+        this.historyDbStorage = historyDbStorage;
     }
 
     public List<User> getAllUsers() {
@@ -97,12 +106,14 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
     public void addFriends(Long userId, Long friendId, String status) {
         insertData(INSERT_FRIEND_QUERY, userId, friendId, status);
         log.info("Adding friend {} to user {}", friendId, userId);
+        saveHistory(friendId, userId, OperationTypes.ADD);
     }
 
     @Override
     public void deleteFriends(Long userId, Long friendId) {
         deleteTwoKeys(DELETE_FRIEND_QUERY, userId, friendId);
         log.info("Removing friend {} from user {}", friendId, userId);
+        saveHistory(friendId, userId, OperationTypes.REMOVE);
     }
 
     @Override
@@ -125,5 +136,20 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
             log.debug("Name is not present, Username set to {}", user.getLogin());
             user.setName(user.getLogin());
         }
+    }
+
+    private void saveHistory(Long id, Long userId, OperationTypes operationTypes) {
+        historyDbStorage.addEvent(Event.builder()
+                .userId(userId)
+                .timestamp(System.currentTimeMillis())
+                .eventType(EventTypes.FRIEND)
+                .operation(operationTypes)
+                .entityId(id)
+                .build());
+    }
+
+    public void deleteUser(long userId) {
+        delete(DELETE_USER_REVIEW_QUERY, userId);
+        delete(DELETE_USER_QUERY, userId);
     }
 }

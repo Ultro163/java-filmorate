@@ -10,6 +10,10 @@ public interface FilmStorage {
 
     Film getFilmById(long id);
 
+    List<Film> getCommonFilms(Long userId, Long friendId);
+
+    List<Film> getRecommendationsFilmsForUser(Long id);
+
     Film createFilm(Film film);
 
     Film updateFilm(Film film);
@@ -17,4 +21,6 @@ public interface FilmStorage {
     void addLikeFilm(long filmId, long userId);
 
     void deleteLikeFromFilm(long filmId, long userId);
+
+    void deleteFilm(long filmId);
 }

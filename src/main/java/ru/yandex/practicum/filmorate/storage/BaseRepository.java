@@ -27,6 +27,15 @@ public class BaseRepository<T> {
         }
     }
 
+    protected Optional<String> findOneInstances(String query, Object... params) {
+        try {
+            String result = jdbc.queryForObject(query, new SingleColumnRowMapper<>(String.class), params);
+            return Optional.ofNullable(result);
+        } catch (EmptyResultDataAccessException ignored) {
+            return Optional.empty();
+        }
+    }
+
     protected List<T> findMany(String query, Object... params) {
         return jdbc.query(query, mapper, params);
     }
@@ -40,8 +49,8 @@ public class BaseRepository<T> {
         return rowsDeleted > 0;
     }
 
-    protected void deleteTwoKeys(String query, long userId, long friendId) {
-        jdbc.update(query, userId, friendId);
+    protected void deleteTwoKeys(String query, Object... params) {
+        jdbc.update(query, params);
     }
 
     protected void update(String query, Object... params) {

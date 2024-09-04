@@ -72,4 +72,9 @@ public class UserDbServiceImpl implements UserService {
                 .filter(otherUserList::contains)
                 .map(userDbStorage::getUserById).toList();
     }
+
+    public void deleteUser(long userId) {
+        userDbStorage.deleteUser(userId);
+        log.info("Пользователь с id {} удален.", userId);
+    }
 }

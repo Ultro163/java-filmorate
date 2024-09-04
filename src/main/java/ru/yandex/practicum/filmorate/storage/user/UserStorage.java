@@ -21,4 +21,6 @@ public interface UserStorage {
     List<User> getFriends(long id);
 
     void updateFriendsStatus(Long userId, Long friendId, String status);
+
+    void deleteUser(long userId);
 }

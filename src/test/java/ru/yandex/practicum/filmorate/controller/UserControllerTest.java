@@ -23,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebAppConfiguration
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class UserControllerTest {
 
     @Autowired
@@ -50,7 +51,6 @@ class UserControllerTest {
     }
 
     @Test
-    @DirtiesContext
     void testForGetUsers() throws Exception {
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).content(creatJsonUser()));
         mockMvc.perform(get("/users/1"))
@@ -61,14 +61,12 @@ class UserControllerTest {
     }
 
     @Test
-    @DirtiesContext
     void testForCreateUser() throws Exception {
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).content(creatJsonUser()))
                 .andExpect(status().isCreated());
     }
 
     @Test
-    @DirtiesContext
     void testForUpdateUser() throws Exception {
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).content(creatJsonUser()));
 

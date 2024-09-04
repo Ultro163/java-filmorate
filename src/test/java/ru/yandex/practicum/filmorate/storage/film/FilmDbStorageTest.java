@@ -7,18 +7,16 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.*;
+import ru.yandex.practicum.filmorate.service.director.DirectorService;
 import ru.yandex.practicum.filmorate.service.genre.GenreService;
+import ru.yandex.practicum.filmorate.service.history.FeedService;
 import ru.yandex.practicum.filmorate.service.mpa.MpaService;
 import ru.yandex.practicum.filmorate.service.user.UserDbServiceImpl;
+import ru.yandex.practicum.filmorate.storage.director.DirectorDbStorage;
 import ru.yandex.practicum.filmorate.storage.genre.GenreDbStorage;
-import ru.yandex.practicum.filmorate.storage.mappers.FilmRowMapper;
-import ru.yandex.practicum.filmorate.storage.mappers.GenreRowMapper;
-import ru.yandex.practicum.filmorate.storage.mappers.MpaRowMapper;
-import ru.yandex.practicum.filmorate.storage.mappers.UserRowMapper;
+import ru.yandex.practicum.filmorate.storage.history.HistoryDbStorage;
+import ru.yandex.practicum.filmorate.storage.mappers.*;
 import ru.yandex.practicum.filmorate.storage.mpa.MpaDbStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.util.validator.FilmValidator;
@@ -37,7 +35,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @AutoConfigureTestDatabase
 @ContextConfiguration(classes = {UserDbStorage.class, UserRowMapper.class, UserDbServiceImpl.class,
         FilmDbStorage.class, FilmRowMapper.class, GenreDbStorage.class, GenreRowMapper.class, GenreService.class,
-        MpaDbStorage.class, MpaRowMapper.class, MpaService.class, FilmValidator.class})
+        MpaDbStorage.class, MpaRowMapper.class, MpaService.class, FilmValidator.class, HistoryDbStorage.class,
+        FeedService.class, EventRowMapper.class, DirectorService.class, DirectorDbStorage.class, DirectorRowMapper.class})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class FilmDbStorageTest {
 
     private final FilmDbStorage filmDbStorage;
@@ -45,6 +45,7 @@ class FilmDbStorageTest {
 
     private void addFilmInDb() {
         Set<Genre> genres = new HashSet<>();
+        Set<Director> directors = new HashSet<>();
         genres.add(new Genre(1, "Комедия"));
         final Film film = Film.builder()
                 .name("Fox")
@@ -53,6 +54,7 @@ class FilmDbStorageTest {
                 .duration(120)
                 .mpa(new Mpa(1, "G"))
                 .genres(genres)
+                .directors(directors)
                 .build();
         filmDbStorage.createFilm(film);
     }
@@ -70,7 +72,6 @@ class FilmDbStorageTest {
     }
 
     @Test
-    @DirtiesContext
     void getFilmById() {
         addFilmInDb();
         Optional<Film> filmOptional = Optional.ofNullable(filmDbStorage.getFilmById(1));
@@ -83,7 +84,6 @@ class FilmDbStorageTest {
     }
 
     @Test
-    @DirtiesContext
     void createFilm() {
         Set<Genre> genres = new HashSet<>();
         genres.add(new Genre(1, "Комедия"));
@@ -101,7 +101,6 @@ class FilmDbStorageTest {
     }
 
     @Test
-    @DirtiesContext
     void updateFilm() {
         addFilmInDb();
         Set<Genre> genres = new HashSet<>();
@@ -125,7 +124,6 @@ class FilmDbStorageTest {
     }
 
     @Test
-    @DirtiesContext
     void addLikeFilm() {
         addFilmInDb();
         addUserInDb();
@@ -134,7 +132,6 @@ class FilmDbStorageTest {
     }
 
     @Test
-    @DirtiesContext
     void deleteLikeFromFilm() {
         addFilmInDb();
         addUserInDb();
